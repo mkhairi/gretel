@@ -14,7 +14,7 @@ module Gretel
         engines = Rails::Engine.subclasses.map(&:instance)
 
         engine_roots = engines.map { |e| e.config.root }
-        
+
         [*engine_roots, Rails.root].map do |root|
           [root.join("config", "breadcrumbs.rb"),
            root.join("config", "breadcrumbs", "**", "*.rb"),
@@ -33,20 +33,26 @@ module Gretel
       @reload_environments ||= ["development"]
     end
 
+    # Load config in breadcrumbs dir as namespaced
+    def namespaced
+      @namespaced ||= false
+    end
+
     # Registers a style for later use.
-    # 
+    #
     #   Gretel.register_style :ul, { container_tag: :ul, fragment_tag: :li }
     def register_style(style, options)
       Gretel::Renderer.register_style style, options
     end
 
     # Sets the Rails environment names with automatic configuration reload. Default is +["development"]+.
-    attr_writer :reload_environments
+    attr_writer :reload_environments, :namespaced
 
     # Yields this +Gretel+ to be configured.
-    # 
+    #
     #   Gretel.configure do |config|
     #     config.reload_environments << "staging"
+    #     config.namespaced = true
     #   end
     def configure
       yield self
