@@ -29,12 +29,11 @@ module Gretel
       end
 
       def load_breadcrumbs_namespaced
-        builder = Builder.new
-
         loaded_file_mtimes.clear
-
+  
         builders = {}
         breadcrumb_files.each do |file|
+          builder = Builder.new
           namespace = File.basename(file, ".rb")
           builder.instance_eval open(file).read, file
           loaded_file_mtimes << File.mtime(file)
