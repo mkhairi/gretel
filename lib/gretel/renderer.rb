@@ -142,6 +142,7 @@ module Gretel
     class << self
       include Resettable
 
+      attr_writer :namespace
       # Registers a style for later use.
       #
       #   Gretel::Renderer.register_style :ul, { container_tag: :ul, fragment_tag: :li }
@@ -152,6 +153,13 @@ module Gretel
       # Hash of registered styles.
       def styles
         @styles ||= DEFAULT_STYLES
+      end
+
+      # Namespace name to load from config
+      # Gretel::Renderer.namespace = "admin"
+      
+      def namespace
+        @namespace ||= false
       end
     end
 

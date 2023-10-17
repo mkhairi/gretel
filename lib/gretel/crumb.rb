@@ -10,12 +10,22 @@ module Gretel
         args.unshift key
         key = key.class.model_name.to_s.underscore.to_sym
       end
+      
+      block = if namespace
+        Gretel::Crumbs.crumbs[namespace][key]
+      else
+        Gretel::Crumbs.crumbs[key]
+      end
 
-      block = Gretel::Crumbs.crumbs[key]
       raise ArgumentError, "Breadcrumb :#{key} not found." unless block
       @key = key
       @context = context
       instance_exec(*args, &block)
+    end
+
+    # Read namespace option
+    def namespace
+      @namespace = Gretel::Renderer.namespace
     end
 
     # Sets link of the breadcrumb.

@@ -18,6 +18,7 @@ module Gretel
         builder = Builder.new
 
         loaded_file_mtimes.clear
+
         breadcrumb_files.each do |file|
           builder.instance_eval open(file).read, file
           loaded_file_mtimes << File.mtime(file)
@@ -27,9 +28,28 @@ module Gretel
         @loaded = true
       end
 
+      def load_breadcrumbs_namespaced
+        builder = Builder.new
+
+        loaded_file_mtimes.clear
+
+        builders = {}
+        breadcrumb_files.each do |file|
+          namespace = File.basename(file, ".rb")
+          builder.instance_eval open(file).read, file
+          loaded_file_mtimes << File.mtime(file)
+          builders[namespace] = builder.crumbs
+        end
+        @crumbs = builders
+        @loaded = true
+      end
+
+
       # Reloads the breadcrumb configuration files if they have changed.
       def reload_if_needed
-        load_breadcrumbs if reload?
+        return unless reload?
+
+        Gretel.namespaced ? load_breadcrumbs_namespaced : load_breadcrumbs
       end
 
       # Returns true if a breadcrumbs reload is needed based on configuration file changes.
