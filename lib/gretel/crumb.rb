@@ -8,9 +8,9 @@ module Gretel
       if key.class.respond_to?(:model_name)
         # Enables calling `breadcrumb @product` instead of `breadcrumb :product, @product`
         args.unshift key
-        key = key.class.model_name.to_s.underscore.to_sym
+        key = key.class.model_name.route_key.to_sym
       end
-      
+
       block = if namespace
         Gretel::Crumbs.crumbs[namespace][key]
       else
